@@ -32,7 +32,7 @@ void setup() {
   pinMode(speakerPin, OUTPUT);
 
   setTime(1, 00, 00, 10, 3, 2019);
-  
+
 
   displayTime();
 
@@ -44,46 +44,54 @@ void loop() {
   int newHour = digitalRead(hourButton);
   int newMin = digitalRead(minButton);
 
-    if(set==HIGH)
-      alarmSet = HIGH;
-    else
-      alarmSet = LOW;
-    if (alarmSet == HIGH)
+  if (set == HIGH)
+    alarmSet = HIGH;
+  else
+    alarmSet = LOW;
+  if (alarmSet == HIGH)
+    displayAlarm();
+  else
+    displayTime();
+
+  if (newHour == HIGH) {
+    hourSet = HIGH;
+
+    if ((hourSet == HIGH) && (alarmSet == HIGH)) {
+      if (alarmHour == 12) {
+        alarmHour = 1;
+        delay(200);
+      }
+      else {
+        alarmHour = alarmHour + 1;
+        delay(200);
+      }
       displayAlarm();
-    else
-      displayTime();
-
-    if (newHour == HIGH) {
-      hourSet = HIGH;
-
-      if ((hourSet == HIGH) && (alarmSet == HIGH)) {
-        if (alarmHour == 12)
-          alarmHour = 1;
-        else
-          alarmHour = alarmHour + 1;
-        displayAlarm();
-      }
     }
+  }
 
-    if (newMin == HIGH) {
-      minSet = newMin;
+  if (newMin == HIGH) {
+    minSet = newMin;
 
-      if ((minSet == HIGH) && (alarmSet == HIGH)) {
-        if (alarmMin == 59)
-          alarmMin = 0;
-        else
-          alarmMin = alarmMin + 1;
-        displayAlarm();
+    if ((minSet == HIGH) && (alarmSet == HIGH)) {
+      if (alarmMin == 59) {
+        alarmMin = 0;
+        delay(200);
       }
+      else {
+        alarmMin = alarmMin + 1;
+        delay(200);
+      }
+      displayAlarm();
     }
+  }
 
-    if((hour() == alarmHour) && (minute() == alarmMin)){
+  if ((hour() == alarmHour) && (minute() == alarmMin)) {
     tone(speakerPin, 1000);
-    }
-//    else
-//    noTone(speakerPin);
- 
-      
+  }
+  //    else
+  //    noTone(speakerPin);
+
+
 
   // save the reading. Next time through the loop, it'll be the lastButtonState:
   //alarmSet = set;
@@ -124,7 +132,7 @@ void displayTime() {
 
   int hr = hour();
   int m = minute();
-  
+
   if (hr < 10) {
     lcd.print("0");
     lcd.print(hr);
